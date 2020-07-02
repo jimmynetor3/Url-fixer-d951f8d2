@@ -1,31 +1,13 @@
 <?php
 
 $input = $argv[1];
-$patternIncorrectProtocol = "/http/m";
-$patternCorrectProtocol = "/https/m";
-$patternIncorrectBackslash = "/\\\/m";
-$replacementProtocol = "https";
-$replacementBackslash = "/";
+$patternIncorrectdomain = '/(?<protocol>http[s]{0,1}):\/{0,1}(?<slashes>\\\\{0,})\/{0,}(?<domain>[^\\\\]{0,})(?<moreslashes>\\\\{0,})/m';
+
 
 //checks if correct protocol is given
-if (preg_match($patternCorrectProtocol, $input)) {
-    if (preg_match($patternIncorrectBackslash, $input)) {
-        echo preg_replace($patternIncorrectBackslash, $replacementBackslash, $input);
-    } else {
-        echo("nothing to replace");
-    }
+if (preg_match($patternIncorrectdomain, $input, $matches)) {
+    $replacementUrl = "https://" . $matches["domain"] . "/";
+    echo preg_replace($patternIncorrectdomain, $replacementUrl, $input);
 } else {
-//   replaces http with https
-    $newUrl = preg_replace($patternIncorrectProtocol, $replacementProtocol, $input);
-    //check for \ and replaces them with /
-    if (preg_match($patternIncorrectBackslash, $newUrl)) {
-        echo preg_replace($patternIncorrectBackslash, $replacementBackslash, $newUrl);
-    } else {
-        //check for \ and replaces them with / if https was given from the start
-        if (preg_match($patternIncorrectBackslash, $input)) {
-            echo preg_replace($patternIncorrectBackslash, $replacementBackslash, $input);
-        } else {
-            echo($newUrl);
-        }
-    }
+    echo("nothing to replace");
 }
